@@ -1,4 +1,4 @@
-type Token @entity {
+type Token @entity (immutable: true) {
   id: Bytes!
   name: String!
   symbol: String!
@@ -7,7 +7,7 @@ type Token @entity {
   approvals: [TokenApproval!]! @derivedFrom(field: "token")
 }
 
-type Account @entity {
+type Account @entity (immutable: true) {
   id: Bytes!
   balances: [TokenBalance!]! @derivedFrom(field: "account")
   incomingApprovals: [TokenApproval!]! @derivedFrom(field: "spenderAccount")
