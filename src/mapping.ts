@@ -1,4 +1,4 @@
-import { BigDecimal, ethereum, Bytes, Address } from "@graphprotocol/graph-ts";
+import { BigDecimal, ethereum, Address } from "@graphprotocol/graph-ts";
 
 import { Approval, ERC20, Transfer } from "../generated/ERC20/ERC20";
 import {
@@ -71,11 +71,7 @@ export function handleApproval(event: Approval): void {
   }
 
   // Create composite ID using Bytes concatenation
-  let approvalId = Bytes.fromUTF8(
-    token.id.toHexString() + "-" +
-    ownerAccount.id.toHexString() + "-" +
-    spenderAccount.id.toHexString()
-  );
+  let approvalId = token.id.concat(ownerAccount.id).concat(spenderAccount.id);
 
   let tokenApproval = TokenApproval.load(approvalId);
   if (!tokenApproval) {
@@ -104,9 +100,7 @@ export function handleTransfer(event: Transfer): void {
   }
 
   if (fromAccount.id != ZERO_ADDR) {
-    let balanceId = Bytes.fromUTF8(
-      token.id.toHexString() + "-" + fromAccount.id.toHexString()
-    );
+    let balanceId = token.id.concat(fromAccount.id)
     let fromTokenBalance = TokenBalance.load(balanceId);
     if (!fromTokenBalance) {
       fromTokenBalance = new TokenBalance(balanceId);
@@ -118,9 +112,7 @@ export function handleTransfer(event: Transfer): void {
     fromTokenBalance.save();
   }
 
-  let toBalanceId = Bytes.fromUTF8(
-    token.id.toHexString() + "-" + toAccount.id.toHexString()
-  );
+  let toBalanceId = token.id.concat(toAccount.id)
   let toTokenBalance = TokenBalance.load(toBalanceId);
   if (!toTokenBalance) {
     toTokenBalance = new TokenBalance(toBalanceId);
