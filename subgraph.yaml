@@ -1,0 +1,34 @@
+specVersion: 1.2.0
+description: ERC20 Subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: ERC20
+    network: base
+    source:
+      abi: ERC20
+      startBlock: 0
+      # endBlock: 16640000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Account
+        - Token
+        - TokenApproval
+        - TokenBalance
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+          calls:
+            ERC20.name: ERC20[event.address].name()
+            ERC20.symbol: ERC20[event.address].symbol()
+            ERC20.decimals: ERC20[event.address].decimals()
+      file: ./src/mapping.ts
